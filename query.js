@@ -49,7 +49,7 @@ async function neatCheck(accountId, near) {
         const balance = await account.getAccountBalance();
         const balanceFormat = utils.format.formatNearAmount(balance.available.toString(),6);
         const mintAmount = Number(info.amount);
-        const mintAmountFormat = mintAmount.toLocaleString();
+        const mintAmountFormat = `${(mintAmount/1_000_000_000).toLocaleString()}B`;
         console.log(`Address: ${info.accountId} NEAR balance: ${balanceFormat}, MINT amount: ${mintAmountFormat}`);
         return mintAmount;
     } else {
@@ -73,7 +73,7 @@ async function main() {
     for (const recipient of recipients) {
         total += await neatCheck(recipient, near);
     }
-    console.log(`TOTAL MINT amount: ${total.toLocaleString()}`);
+    console.log(`TOTAL MINT amount: ${(total/1_000_000_000).toLocaleString()}B `);
 }
 
 main().catch(err => console.error(err));

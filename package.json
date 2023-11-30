@@ -10,5 +10,11 @@
     "near-api-js": "^2.1.4",
     "near-seed-phrase": "^0.2.0",
     "node-fetch": "^3.3.2"
+  },
+  "scripts": {
+    "mint": "node index.js",
+    "query": "node query.js",
+    "generate": "node wallet_gen.js",
+    "transfer": "node transfer.js"
   }
 }
