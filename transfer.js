@@ -32,9 +32,9 @@ async function main() {
                 recipient,
                 amountYoctoNEAR
             );
-            console.log(`转账给 ${recipient} 成功: 交易哈希 ${result.transaction.hash}`);
+            console.log(`Transfer to ${recipient} SUCCEEDED: Tnx ${result.transaction.hash}`);
         } catch (error) {
-            console.error(`转账给 ${recipient} 失败: `, error);
+            console.error(`Transfer to ${recipient} FAILED: `, error);
         }
     }
 }

@@ -13,7 +13,7 @@ async function main() {
     try {
         walletData = JSON.parse(readFileSync('near_wallets.json', 'utf-8'));
     } catch (e) {
-        console.log('未找到 near_wallets.json，使用配置的主钱包');
+        console.log('NOT FOUND near_wallets.json，using main wallet');
     }
     walletData.push(mainWallet);
     const contractArgs = {
@@ -36,7 +36,7 @@ async function main() {
         const account = await near.account(wallet.implicitAccountId);
         const balance = await account.getAccountBalance();
         const balanceFormat = utils.format.formatNearAmount(balance.available.toString(),6);
-        console.log(`账户 ${wallet.implicitAccountId} 余额: ${balanceFormat}`);
+        console.log(`Wallet: ${wallet.implicitAccountId} Balance: ${balanceFormat}`);
         for (let i = 0; i < numberOfTimes; i++) {
             try {
                 if (utils.format.parseNearAmount(balance.available) > 0.1) {
@@ -49,24 +49,25 @@ async function main() {
                     });
                     let hash = result.transaction.hash;
                     // console.log(`${wallet.implicitAccountId}, 第 ${i + 1} 次操作成功: ${'https://nearblocks.io/zh-cn/txns/' + hash}`);
-                    console.log(`${wallet.implicitAccountId}, 第 ${i + 1} 次操作成功: ${'https://getblock.io/explorers/near/transactions/' + hash}`);
+                    console.log(`${wallet.implicitAccountId}, NO.${i + 1} MINT SUCCEEDED: ${'https://getblock.io/explorers/near/transactions/' + hash}`);
                     await new Promise(resolve => setTimeout(resolve, 10000));
                 } else {
-                    console.log(`账户 ${wallet.implicitAccountId} 余额不足, 剩下 ${balanceFormat} NEAR`);
+                    console.log(`Wallet ${wallet.implicitAccountId} has INSUFFICIENT BALANCE, ${balanceFormat} NEAR left`);
+                    console.log(`STOP MINTING FOR ${wallet.implicitAccountId}`)
                     break;
                 }
             } catch (error) {
-                console.error(`第 ${i + 1} 次操作失败: `, error);
+                console.error(`NO.${i + 1} MINT FAILED: `, error);
             }
         }
     }
     // 10 次操作 是每个钱包都打10次
     Promise.all(walletData.map(wallet => performInscribe(wallet, contractArgs, 9999)))
         .then(() => {
-            console.log("所有操作完成");
+            console.log("All operations COMPLETED");
         })
         .catch(error => {
-            console.error("操作中有错误发生: ", error);
+            console.error("An error occurred during operation: ", error);
         });
 }
 

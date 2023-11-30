@@ -48,15 +48,19 @@ async function neatCheck(accountId, near) {
         const account = await near.account(info.accountId);
         const balance = await account.getAccountBalance();
         const balanceFormat = utils.format.formatNearAmount(balance.available.toString(),6);
-        console.log(`地址: ${info.accountId} NEAR 余额: ${balanceFormat}, MINT数量: ${info.amount}`);
+        const mintAmount = Number(info.amount);
+        const mintAmountFormat = mintAmount.toLocaleString();
+        console.log(`Address: ${info.accountId} NEAR balance: ${balanceFormat}, MINT amount: ${mintAmountFormat}`);
+        return mintAmount;
     } else {
-        console.log(`未找到 ${accountId} 的 NEAT 信息`);
+        console.log(`Not found NEAT info of ${accountId}`);
+        return 0;
     }
 
 }
 
 const wallets = JSON.parse(readFileSync('near_wallets.json', 'utf-8'));
-const recipients = wallets.map(wallet => wallet.implicitAccountId);
+const recipients = [process.env.CONTRACT_NAME, ...wallets.map(wallet => wallet.implicitAccountId)];
 async function main() {
     const config = {
         networkId: process.env.NETWORK_ID || "mainnet",
@@ -65,9 +69,11 @@ async function main() {
     };
 
     const near = await connect(config);
+    let total = 0;
     for (const recipient of recipients) {
-        await neatCheck(recipient, near);
+        total += await neatCheck(recipient, near);
     }
+    console.log(`TOTAL MINT amount: ${total.toLocaleString()}`);
 }
 
 main().catch(err => console.error(err));
